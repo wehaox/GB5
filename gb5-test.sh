@@ -3,19 +3,27 @@
 ##### 自定义常量 ######
 
 # 脚本发布版本
-script_version="v2024-05-08"
+script_version="v2024-12-03"
 
-# geekbench5发布版本
+# geekbench发布版本
 geekbench_version="5.5.1"
+geekbench6_version="6.3.0"
+geekbench_version_selected="5"
 
 # geekbench5官方SHA-256
 geekbench_x86_64_official_sha256="32037e55c3dc8f360fe16b7fbb188d31387ea75980e48d8cf028330e3239c404"
 geekbench_aarch64_official_sha256="9eb3ca9ec32abf0ebe1c64002b19108bfea53c411c6b556b0c2689514b8cbd6f"
 geekbench_riscv64_official_sha256="65070301ccedd33bfd4797a19e9d28991fe719cc38570dbc445b8355a5b9bc64"
 
+
+# geekbench6官方SHA-256
+geekbench6_x86_64_official_sha256="01727999719cd515a7224075dcab4876deef2844c45e8c2e9f34197224039f3b"
+geekbench6_aarch64_official_sha256="7db7f4d6a6bdc31de4f63f0012abf7f1f00cdc5f6d64e727a47ff06bff6b6b04"
+geekbench6_riscv64_official_sha256="0d1bd6e7133ddfa3a31ecefd5d1ed061d0a08722fffaccff282a4416be6cf18f"
+
 # 下载源
 url_1="https://cdn.geekbench.com"
-url_2="https://asset.bash.icu/https://cdn.geekbench.com"
+url_2="https://cdn.wehao.org/gb5"
 
 # 测试工作目录
 dir="./gb5-github-i-abc"
@@ -37,12 +45,38 @@ _blue() {
 ##### 横幅 #####
 _banner() {
     echo -e "# ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## #"
-    echo -e "#            专用于服务器的GB5测试             #"
+    echo -e "#            专用于服务器的GB测试              #"
     echo -e "#                 $script_version                  #"
-    echo -e "#         $(_yellow "bash <(curl -sL bash.icu/gb5)")        #"
-    echo -e "#         https://github.com/i-abc/gb5         #"
+    echo -e "#      $(_yellow "bash <(curl -sL b.wehao.org/s/gb5)")      #"
+    echo -e "#         https://github.com/wehaox/gb5        #"
     echo -e "# ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## #"
     echo
+}
+
+
+##### 选择测试版本 #####
+_select_version() {
+    echo "请选择Geekbench版本："
+    echo "1. Geekbench 5"
+    echo "2. Geekbench 6"
+    echo -e "默认(回车)选择Geekbench 5\n"
+    _yellow "请输入您的选择 (1或2)：\c"
+    read -r version_choice
+    echo -e "\033[0m"
+
+    case "$version_choice" in
+    2)
+    		geekbench_version_selected="6"
+        geekbench_version=$geekbench6_version
+        geekbench_x86_64_official_sha256=$geekbench6_x86_64_official_sha256
+        geekbench_aarch64_official_sha256=$geekbench6_aarch64_official_sha256
+        geekbench_riscv64_official_sha256=$geekbench6_riscv64_official_sha256
+        ;;
+    *)
+    		geekbench_version_selected="5"
+        echo "默认选择Geekbench 5"
+        ;;
+    esac
 }
 
 ##### 检测locale配置并覆盖为C语言环境 #####
@@ -92,23 +126,21 @@ _check_architecture() {
         geekbench_tar_name=Geekbench-$geekbench_version-Linux.tar.gz
         geekbench_tar_folder=Geekbench-$geekbench_version-Linux
         geekbench_official_sha256=$geekbench_x86_64_official_sha256
-        geekbench_software_name=geekbench5
     elif [ "$(uname -m)" == "aarch64" ]; then
         _blue "本机架构：aarch64"
         geekbench_tar_name=Geekbench-$geekbench_version-LinuxARMPreview.tar.gz
         geekbench_tar_folder=Geekbench-$geekbench_version-LinuxARMPreview
         geekbench_official_sha256=$geekbench_aarch64_official_sha256
-        geekbench_software_name=geekbench5
     elif [ "$(uname -m)" == "riscv64" ]; then
         _blue "本机架构：riscv64"
         geekbench_tar_name=Geekbench-$geekbench_version-LinuxRISCVPreview.tar.gz
         geekbench_tar_folder=Geekbench-$geekbench_version-LinuxRISCVPreview
         geekbench_official_sha256=$geekbench_riscv64_official_sha256
-        geekbench_software_name=geekbench5
     else
         echo "本脚本目前只支持x86_64、aarch64、riscv64架构"
         exit
     fi
+    geekbench_software_name="geekbench${geekbench_version_selected}"
     _blue "本机虚拟：$(systemd-detect-virt)"
 }
 
@@ -168,7 +200,7 @@ _check_swap() {
             else
                 echo
                 echo "很抱歉，由于未知原因，Swap未能成功新增，现在内存加Swap总计${new_ms}Mi，仍不满足GB5测试条件，有如下备选方案："
-                echo "1. 强制执行GB5测试"
+                echo "1. 强制执行GB${geekbench_version_selected}测试"
                 echo -e "2. 退出测试\n"
                 _yellow "请输入您的选择 (序号)：\c"
                 read -r choice_2
@@ -250,7 +282,7 @@ _unzip_tar() {
 
 ##### 运行测试 #####
 _run_test() {
-    _yellow "测试中\n"
+    _yellow "Geekbench ${geekbench_version_selected} 测试中\n"
 
     # 计时开始
     run_start_time=$(date +"%s")
@@ -286,7 +318,7 @@ _output_summary() {
     echo -e "净测试时长：$run_time_minutes分$run_time_seconds秒\n"
 
     # 参数
-    _yellow "Geekbench 5 测试结果\n"
+    _yellow "Geekbench ${geekbench_version_selected} 测试结果\n"
     awk '/System Information/,/Size/{sub("System Information", "系统信息"); sub("Processor Information", "处理器信息"); sub("Memory Information", "内存信息"); print}' $dir/result.txt
 
     # 分数
@@ -297,7 +329,7 @@ _output_summary() {
     # 链接
     awk '/https.*cpu\/[0-9]*$/{print "详细结果链接：" $1}' $dir/result.txt
     cpu=$(awk -F 'with an? | processor' '/Benchmark results for/{gsub(/ /,"%20",$2); print $2}' $dir/result.html)
-    echo "可供参考链接：https://browser.geekbench.com/search?k=v5_cpu&q=$cpu"
+    echo "可供参考链接：https://browser.geekbench.com/search?k=v${geekbench_version_selected}_cpu&q=$cpu"
 
     echo
     awk '/https.*key=[0-9]*$/{print "个人保存链接：" $1}' $dir/result.txt
@@ -316,11 +348,11 @@ _main() {
     trap '_rm_dir' EXIT
     clear
     _banner
+    _select_version
     _check_locale
     _check_ip
     _check_package wget wget
     _check_package tar tar
-    # _check_package fallocate util-linux
     _check_package perl perl
     clear
     _banner

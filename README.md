@@ -1,6 +1,12 @@
-# Geekbench 5 专测
+# 继续简单维护
 
-用心做好 GB5 测试，让测试更方便、更迅速、更人性化。
+原作者似乎已经放弃维护了  
+
+Update: 替换CDN源，增加了GB6的测试
+
+# Geekbench 5/6 专测
+
+用心做好 GB5/6 测试，让测试更方便、更迅速、更人性化。
 
 ## 脚本特性
 
@@ -14,29 +20,27 @@
 
 ## 使用方法
 
-<a target="_blank" href="https://bash.icu/gb5"><img src="https://img.shields.io/website?url=https%3A%2F%2Fbash.icu%2Fgb5&label=bash.icu%2Fgb5&cacheSeconds=300" />
-
 ```
-bash <(curl -sL bash.icu/gb5)
+bash <(curl -sL b.wehao.org/s/gb5)
 ```
 
 或
 
 ```
-bash <(wget -qO- https://raw.githubusercontent.com/i-abc/GB5/main/gb5-test.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/wehaox/GB5/main/gb5-test.sh)
 ```
 
 ## 使用截图
 
 - 输出结果
 
-![](https://github.com/i-abc/GB5/raw/main/images/1.png)
+![](https://github.com/wehaox/GB5/raw/main/images/1.png)
 
 ```
 # ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## #
-#            专用于服务器的GB5测试             #
-#                 v2023-08-07                  #
-#        https://github.com/i-abc/gb5          #
+#            专用于服务器的GB5测试                #
+#                 v2024-12-03                  #
+#        https://github.com/wehaox/gb5         #
 # ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## #
 
 当前时间：2023-08-07 08:22:28 UTC
@@ -74,22 +78,13 @@ Geekbench 5 测试结果
 
 - 完整过程
 
-![](https://github.com/i-abc/GB5/raw/main/images/1.gif)
+![](https://github.com/wehaox/GB5/raw/main/images/1.gif)
 
 - x86_64
 
-![](https://github.com/i-abc/GB5/raw/main/images/2.png)
+![](https://github.com/wehaox/GB5/raw/main/images/2.png)
 
 - aarch64
 
-![](https://github.com/i-abc/GB5/raw/main/images/3.png)
+![](https://github.com/wehaox/GB5/raw/main/images/3.png)
 
-## 待办
-
-- [x] 将分数直接展示到终端
-- [x] 在测试后会提供同种 CPU 的对比
-- [ ] 增加更多 CPU 方面的测试
-- [ ] lxc 添加 Swap 失败
-- [x] 支持 ARM
-- [ ] 添加 GB6
-- [ ] 在进行 GB 测试前先进行简单的 CPU 测试，若涉及 Swap 还要测试硬盘，通过后才进行 GB 测试，见 [issue 1](https://github.com/i-abc/GB5/issues/1)
